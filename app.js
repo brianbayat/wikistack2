@@ -1,8 +1,11 @@
 const express = require('express');
 const morgan = require('morgan');
-const main = require('./views/main');
+
 const { db, Page, User } = require('./models');
 const app = express();
+
+const wikiRouter = require('./routes/wiki')
+const userRouter = require('./routes/user')
 
 // parses url-encoded bodies
 app.use(express.urlencoded({ extended: false }));
@@ -17,9 +20,18 @@ then(() => {
   console.log('connected to the database');
 });
 
+app.use('/wiki',wikiRouter);
+app.use('/user',userRouter);
+
 app.get('/',(req,res)=>{
-  res.send(main());
+  try {
+    res.redirect("/wiki");
+  }
+  catch (err) {
+    res.sendStatus(404)
+  }
 });
+
 
 const PORT = 1337;
 
